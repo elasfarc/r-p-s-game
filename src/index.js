@@ -1,3 +1,4 @@
-import {computerPlay} from './game.js'
+import {computerPlay, playerSelection} from './game.js'
 
 console.log(computerPlay())
+console.log(playerSelection())
