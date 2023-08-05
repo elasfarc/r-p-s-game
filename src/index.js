@@ -1,4 +1,4 @@
-import { playRound, computerPlay, playerSelection, getGame } from "./game.js";
+import { getGame } from "./game.js";
 
 // console.log(computerPlay())
 // console.log(playerSelection())
