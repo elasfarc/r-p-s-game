@@ -7,7 +7,7 @@ function sleep(delay) {
 }
 
 function getRandomInt({ from = 0, to = 10 } = {}) {
-  return Math.floor(Math.random() * to + from);
+  return Math.floor(Math.random() * to) + from;
 }
 
 const splitStr = (sep) => (i) => (str) => str.split(sep)[i].trim();

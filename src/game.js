@@ -1,65 +1,72 @@
+import { ACTIONS, dispatch, getState } from "./g_state.js";
 import { capitalize, sleep, getRandomInt } from "./helpers.js";
 import { SELECTIONS, SYMBOLS, MODES, WIN_CASE } from "./game_const.js";
 
 function getGame() {
-  return { start };
+  return { init, start };
   /**/
   async function init() {
-    const mode = +prompt(
+    const modeInput = +prompt(
       `choose the game mode \n 0: ${MODES[0]} \n 1: ${MODES[1]}"`,
       "0",
     );
-    const isSingle = mode === 0;
 
-    console.log(`=========\nMODE: ${
-      isSingle ? MODES[0] : MODES[1]
-    } \n=========\n
+    const { isSingle, mode } = dispatch({
+      action:
+        modeInput === 0
+          ? ACTIONS.CHANGE_MODE_SINGLE
+          : ACTIONS.CHANGE_MODE_MULTI,
+    });
+
+    console.log(`=========\nMODE: ${mode} \n=========\n
         Okay master${!isSingle ? "s" : ""}, Let's start with your name${
           !isSingle ? "s" : ""
         }\n
         `);
     await sleep(1000);
     const p1Name = prompt("What's your name master?");
+    dispatch({ action: ACTIONS.CHANGE_NAME_P1, data: p1Name });
     console.log(`Okay master ${p1Name}!`);
-    const p2Name = isSingle
-      ? "Computer"
-      : prompt("What's about the other master?");
+    if (!isSingle)
+      dispatch({
+        action: ACTIONS.CHANGE_NAME_P2,
+        data: prompt("What's about the other master?"),
+      });
     await sleep(1000);
     console.log(
       `=========\nLet's get Started \n=========\n Rock, Paper, Scissors SHOOOOT `,
     );
-    return {
-      mode,
-      isSingle,
-      roundCount: 5,
-      names: { p1Name, p2Name },
-    };
   }
 
   async function start() {
-    const { roundCount, names, score, isSingle } = {
-      ...(await init()),
-      score: { p1: 0, p2: 0 },
-    };
+    const { roundCount, currentPlayer, isSingle, names } = getState();
     let i = 0;
     while (i < roundCount) {
-      const p1Selection = playerSelection();
-      const p2Selection = isSingle ? computerPlay() : playerSelection();
+      const p1Selection = playerSelection(name[currentPlayer]);
+      const p2Selection = isSingle
+        ? computerPlay()
+        : playerSelection(name[currentPlayer]);
       const { winner, msg } = playRound({
         names,
         selections: { p1Selection, p2Selection },
-        round: i + 1,
+        round: i,
       });
-      winner && score[winner]++;
+      console.log(winner);
+      dispatch({
+        action: ACTIONS.MAKE_MOVE,
+        data: { winner, round: i, move: { p1: p1Selection, p2: p2Selection } },
+      });
+
       i++;
-      // winner && i++;
+
       console.log(`
       ==============================
                 ${msg}
       ==============================
       `);
+
+      console.log(getState());
     }
-    return score;
   }
 }
 
@@ -69,11 +76,15 @@ function playRound({ names, selections: { p1Selection, p2Selection }, round }) {
     : isP1Win(p1Selection, p2Selection)
     ? {
         winner: "p1",
-        msg: `Round:${round}\n ${names.p1Name} won, ${p1Selection} ${SYMBOLS[p1Selection]} beats ${p2Selection} ${SYMBOLS[p2Selection]}!`,
+        msg: `Round:${round + 1}\n ${names.p1} won, ${p1Selection} ${
+          SYMBOLS[p1Selection]
+        } beats ${p2Selection} ${SYMBOLS[p2Selection]}!`,
       }
     : {
         winner: "p2",
-        msg: `Round:${round}\n ${names.p2Name} won, ${p2Selection} ${SYMBOLS[p2Selection]} beats ${p1Selection} ${SYMBOLS[p1Selection]}!`,
+        msg: `Round:${round + 1}\n ${names.p2} won, ${p2Selection} ${
+          SYMBOLS[p2Selection]
+        } beats ${p1Selection} ${SYMBOLS[p1Selection]}!`,
       };
 }
 
@@ -87,7 +98,7 @@ function isDraw(p1, p2) {
 function computerPlay() {
   const randomNum = getRandomInt({
     from: 0,
-    to: 2,
+    to: 3,
   });
 
   return randomNum === 0
@@ -97,8 +108,11 @@ function computerPlay() {
     : SELECTIONS[2];
 }
 
-function playerSelection() {
-  const usrInput = prompt("Yo! Rock, Paper or Scissors?!", "Rock");
+function playerSelection(playerName) {
+  const usrInput = prompt(
+    `Yo ${playerName}! Rock, Paper or Scissors?!`,
+    "Rock",
+  );
   return capitalize(usrInput);
 }
 
