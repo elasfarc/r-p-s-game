@@ -42,10 +42,10 @@ function getGame() {
     const { roundCount, currentPlayer, isSingle, names } = getState();
     let i = 0;
     while (i < roundCount) {
-      const p1Selection = playerSelection(name[currentPlayer]);
+      const p1Selection = playerSelection(names[currentPlayer]);
       const p2Selection = isSingle
         ? computerPlay()
-        : playerSelection(name[currentPlayer]);
+        : playerSelection(names[currentPlayer]);
       const { winner, msg } = playRound({
         names,
         selections: { p1Selection, p2Selection },
