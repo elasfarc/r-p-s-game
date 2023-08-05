@@ -10,6 +10,26 @@ const WIN_CASE = {
     [GAME_SELECTIONS[2]]: GAME_SELECTIONS[1],
 };
 
+function getGame(){
+    const MODES = ["Single", "Multiplayer"]
+    const gameState = {}
+    return {init}
+    /**/
+    async function init(){
+        const mode = prompt(`choose the game mode \n 0: ${MODES[0]} \n 1: ${MODES[1]}", '0'`);
+        const isSingle = mode === '0'
+        console.log(`=========\nMODE: ${isSingle ? MODES[0] : MODES[1] } \n=========\n
+        Okay master${!isSingle ? 's' : ''}, Let's start with your name${!isSingle ? 's' : ''}\n
+        `);
+        await sleep(1000);
+        const p1Name = prompt("What's your name master?")
+        console.log(`Okay master ${p1Name}!`)
+        const p2Name = isSingle ? 'Computer' : prompt("What's about the other master?")
+        await sleep(1000);
+        console.log(`=========\nLet's get Started \n=========\n Rock, Paper, Scissors SHOOOOT `);
+    }
+}
+
 const MESSAGES = {};
 function playRound( computerSelection, playerSelection ) {
     const p1 = "Computer";
@@ -50,4 +70,8 @@ function capitalize(str) {
     return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export { playRound, computerPlay, playerSelection};
+function sleep(delay) {
+    return new Promise(res => setTimeout(res, delay))
+}
+
+export { playRound, computerPlay, playerSelection, getGame};
