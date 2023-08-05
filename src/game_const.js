@@ -9,7 +9,7 @@ const SELECTIONS = {
 const SYMBOLS = {
   [SELECTIONS[0]]: "✊🏻",
   [SELECTIONS[1]]: "🫴🏻📄",
-  [SELECTIONS[2]]: "✂️",
+  [SELECTIONS[2]]: "✂️ ",
 };
 
 const WIN_CASE = {

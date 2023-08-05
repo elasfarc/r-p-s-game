@@ -51,7 +51,7 @@ function getGame() {
         selections: { p1Selection, p2Selection },
         round: i,
       });
-      console.log(winner);
+
       dispatch({
         action: ACTIONS.MAKE_MOVE,
         data: { winner, round: i, move: { p1: p1Selection, p2: p2Selection } },
@@ -64,8 +64,6 @@ function getGame() {
                 ${msg}
       ==============================
       `);
-
-      console.log(getState());
     }
   }
 }
